@@ -43,7 +43,7 @@ class MqttController extends GetxController {
     final responses = objectbox.noteBox.getAll();
     if (responses.isEmpty) {
       await objectbox
-          .addNote(types.TextMessage(senderId: 'b', receiverId: userName));
+          .addNote(types.TextMessage(senderId: 'c', receiverId: userName));
     } else {
       print('Second Time');
       for (var x = 0; x < responses.length; x++) {
@@ -57,7 +57,7 @@ class MqttController extends GetxController {
       if (checkData){
         print('DB is Created');
         await objectbox
-            .addNote(types.TextMessage(senderId: 'b', receiverId: userName));
+            .addNote(types.TextMessage(senderId: 'c', receiverId: userName));
       }
     }
   }
@@ -165,6 +165,30 @@ class MqttController extends GetxController {
     }
   }
 
+  // void sendAcknowledgement(
+  //     String chatID, int deliveryTime, int status, String receiverID) async {
+  //   final builder = MqttClientPayloadBuilder();
+  //   if (status == 3) {
+  //     var dataToSend =
+  //         '{"client_id":"$userID","chatId":"$chatID","readTime":$deliveryTime,"senderId":"$userID","status":$status}';
+  //     builder.addUTF8String(dataToSend);
+  //     var pubStatus = _mqttServerClient!.publishMessage(
+  //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
+  //         retain: true);
+  //     // Utility.printILog('publish message $pubStatus');
+  //     update();
+  //   } else if (status == 2) {
+  //     var dataToSend =
+  //         '{"client_id":"$userID","chatId":"$chatID","deliveryTime":$deliveryTime,"senderId":"$userID","status":$status}';
+  //     builder.addUTF8String(dataToSend);
+  //     var pubStatus = _mqttServerClient!.publishMessage(
+  //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
+  //         retain: true);
+  //     // Utility.printILog('publish message $pubStatus');
+  //     update();
+  //   }
+  // }
+
   /// The subscribed callback
   void onSubscribed(String topic) {
     print('EXAMPLE::Subscription confirmed for topic $topic');
@@ -195,6 +219,7 @@ class MqttController extends GetxController {
 
       final message = types.MessageData.fromJson(jsonDecode(pt));
       if (message.receiverId != checkId ){
+        print('Rahul Saryam ${message.receiverId}');
         addMessage(message);
       }
 
@@ -209,6 +234,9 @@ class MqttController extends GetxController {
   }
 }
 
+
+
+//
 // import 'dart:convert';
 // import 'package:file_picker/file_picker.dart';
 // import 'package:flutter/material.dart';
@@ -619,29 +647,29 @@ class MqttController extends GetxController {
 //   //   }
 //   // }
 //
-//   // void sendAcknowledgement(
-//   //     String chatID, int deliveryTime, int status, String receiverID) async {
-//   //   final builder = MqttClientPayloadBuilder();
-//   //   if (status == 3) {
-//   //     var dataToSend =
-//   //         '{"client_id":"$userID","chatId":"$chatID","readTime":$deliveryTime,"senderId":"$userID","status":$status}';
-//   //     builder.addUTF8String(dataToSend);
-//   //     var pubStatus = _mqttServerClient!.publishMessage(
-//   //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
-//   //         retain: true);
-//   //     Utility.printILog('publish message $pubStatus');
-//   //     update();
-//   //   } else if (status == 2) {
-//   //     var dataToSend =
-//   //         '{"client_id":"$userID","chatId":"$chatID","deliveryTime":$deliveryTime,"senderId":"$userID","status":$status}';
-//   //     builder.addUTF8String(dataToSend);
-//   //     var pubStatus = _mqttServerClient!.publishMessage(
-//   //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
-//   //         retain: true);
-//   //     Utility.printILog('publish message $pubStatus');
-//   //     update();
-//   //   }
-//   // }
+//   void sendAcknowledgement(
+//       String chatID, int deliveryTime, int status, String receiverID) async {
+//     final builder = MqttClientPayloadBuilder();
+//     if (status == 3) {
+//       var dataToSend =
+//           '{"client_id":"$userID","chatId":"$chatID","readTime":$deliveryTime,"senderId":"$userID","status":$status}';
+//       builder.addUTF8String(dataToSend);
+//       var pubStatus = _mqttServerClient!.publishMessage(
+//           'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
+//           retain: true);
+//       // Utility.printILog('publish message $pubStatus');
+//       update();
+//     } else if (status == 2) {
+//       var dataToSend =
+//           '{"client_id":"$userID","chatId":"$chatID","deliveryTime":$deliveryTime,"senderId":"$userID","status":$status}';
+//       builder.addUTF8String(dataToSend);
+//       var pubStatus = _mqttServerClient!.publishMessage(
+//           'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
+//           retain: true);
+//       // Utility.printILog('publish message $pubStatus');
+//       update();
+//     }
+//   }
 //
 //   void _switchMQTTAppConnectionState(MQTTAppConnectionState mqttAppConnectionState) {
 //     this.mqttAppConnectionState = mqttAppConnectionState;

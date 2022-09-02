@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'main.dart';
 import 'models.dart';
 import 'objectbox.g.dart';
 
@@ -62,6 +61,8 @@ class ObjectBox {
   static void _addNoteInTx(Store store, types.MessageData message) async {
     List<String>? messageList;
     final user = store.box<UserMessage>().getAll();
+    final messageInString = json.encode(message);
+    var boxStore = store.box<UserMessage>();
     if (message.initiated == null) {
       messageList = [];
       store.box<UserMessage>().put(UserMessage(
@@ -70,14 +71,23 @@ class ObjectBox {
           senderId: message.senderId));
     } else {
       for (var x = 0; x < user.length; x++) {
-        if (message.receiverId == user[x].receiverId) {
-         final messageInString = json.encode(message);
-          var boxStore = store.box<UserMessage>();
-          var index = boxStore.get(user[x].id);
-          index?.mainMessageData?.add(messageInString);
-          boxStore.put(index!);
-         print('main Main List ${user[x].mainMessageData}');
-          // break;
+        if (message.initiated!) {
+          print('yes initiated ${message.initiated}');
+          print('${message.receiverId} == ${user[x].receiverId}');
+          if (message.receiverId == user[x].receiverId) {
+            var index = boxStore.get(user[x].id);
+            index?.mainMessageData?.add(messageInString);
+            boxStore.put(index!);
+            // break;
+          }
+        } else {
+          print('yes initiated ${message.initiated}');
+          print('${message.senderId} == ${user[x].receiverId}');
+          if (message.senderId == user[x].receiverId) {
+            var index = boxStore.get(user[x].id);
+            index?.mainMessageData?.add(messageInString);
+            boxStore.put(index!);
+          }
         }
       }
     }
@@ -96,7 +106,5 @@ class ObjectBox {
     //     dataSize: message.dataSize,
     //     thumbnail: message.thumbnail,
     //
-
-
   }
 }

@@ -16,38 +16,30 @@ class ChatController extends GetxController{
   }
 
   List<Map> data = [
-    {
-      'name': 'Rahul',
-      'image':
-      'https://hashnode.com/_next/image?url=https%3A%2F%2Fcdn.hashnode.com%2Fres%2Fhashnode%2Fimage%2Fupload%2Fv1624205583261%2F16z78Jg5E.jpeg%3Fw%3D1000%26h%3D1000%26fit%3Dcrop%26crop%3Dentropy%26auto%3Dcompress%2Cformat%26format%3Dwebp&w=3840&q=75',
-      'time': '02:00 AM',
-      'message': 'hi',
-      'online': true
-    },
     // {
-    //   'name': 'Rahul',
+    //   'name': 'c',
     //   'image':
     //   'https://media-exp1.licdn.com/dms/image/C4D03AQGqCechvJ3VXA/profile-displayphoto-shrink_800_800/0/1615043633236?e=2147483647&v=beta&t=FBXEm0K4vHsg0bpojs4wCiHBhsQb_1aZUhj1WfI8ysQ',
     //   'time': '12:00 AM',
     //   'message': 'Bol bhai',
     //   'online': true
     // },
-    // {
-    //   'name': 'Rajkumar Gahane',
-    //   'image':
-    //   'https://media-exp1.licdn.com/dms/image/C4E03AQHrwP5CtFo_pg/profile-displayphoto-shrink_200_200/0/1628675384915?e=2147483647&v=beta&t=Pk5FrDBxm2Ryxv3YAZ99nb08jSKKz-ngUdkuLlZsduE',
-    //   'time': '01:00 AM',
-    //   'message': 'Hiii',
-    //   'online': false
-    // },
-    // {
-    //   'name': 'Riyaz Khan',
-    //   'image':
-    //   'https://media-exp1.licdn.com/dms/image/C4D03AQHiznmKuo5jsw/profile-displayphoto-shrink_200_200/0/1516314605932?e=2147483647&v=beta&t=bg2MAprt3fPziGUfzvSWkPqIWr9m9jVdAdlsxCluJsA',
-    //   'time': '10:00 PM',
-    //   'message': 'Hello',
-    //   'online': false
-    // },
+    {
+      'name': 'a',
+      'image':
+      'https://media-exp1.licdn.com/dms/image/C4E03AQHrwP5CtFo_pg/profile-displayphoto-shrink_200_200/0/1628675384915?e=2147483647&v=beta&t=Pk5FrDBxm2Ryxv3YAZ99nb08jSKKz-ngUdkuLlZsduE',
+      'time': '01:00 AM',
+      'message': 'Hiii',
+      'online': false
+    },
+    {
+      'name': 'b',
+      'image':
+      'https://media-exp1.licdn.com/dms/image/C4D03AQHiznmKuo5jsw/profile-displayphoto-shrink_200_200/0/1516314605932?e=2147483647&v=beta&t=bg2MAprt3fPziGUfzvSWkPqIWr9m9jVdAdlsxCluJsA',
+      'time': '10:00 PM',
+      'message': 'Hello',
+      'online': false
+    },
     // {
     //   'name': 'Bhupendra',
     //   'image':
@@ -95,12 +87,19 @@ class ChatController extends GetxController{
 
   void loadLastMessage() {
     final responses = objectbox.noteBox.getAll();
+    String? message;
+    Map<String, dynamic>? lastMessage;
+    print('length ${responses.length}');
     for(var x = 0; x < responses.length; x++){
       for(var y = 0; y < data.length; y++){
         if (responses[x].receiverId == data[y]['name']){
-          var lastMessage = jsonDecode(responses[x].mainMessageData!.last);
-          var message = utf8.fuse(base64).decode(lastMessage['payload']);
-          final timestamp1 = lastMessage['createdAt']; // timestamp in seconds
+          if(responses[x].mainMessageData!.isEmpty){
+            message = data[y]['message'];
+          } else {
+            lastMessage = jsonDecode(responses[x].mainMessageData!.last);
+            message = utf8.fuse(base64).decode(lastMessage!['payload']);
+          }
+          final timestamp1 = lastMessage!['createdAt']; // timestamp in seconds
           final DateTime date1 = DateTime.fromMillisecondsSinceEpoch(timestamp1);
           String timeFormate = DateFormat.jm().format(date1);
           data[y]['message'] = message;

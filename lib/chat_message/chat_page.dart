@@ -48,142 +48,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) => GetBuilder<MqttController>(
       builder: (controller) => Scaffold(
-            // appBar: AppBar(
-            //   leadingWidth: 30,
-            //   actions: [
-            //     GestureDetector(
-            //       child: const Icon(Icons.attach_file),
-            //       onTap: () {
-            //         _handleAtachmentPressed();
-            //       },
-            //     ),
-            //     PopupMenuButton<int>(
-            //       itemBuilder: (context) => [
-            //         // PopupMenuItem 1
-            //         PopupMenuItem(
-            //           value: 1,
-            //           // row with 2 children
-            //           child: Row(
-            //             children: const [
-            //               Icon(
-            //                 Icons.delete,
-            //                 color: Colors.black,
-            //               ),
-            //               SizedBox(
-            //                 width: 10,
-            //               ),
-            //               Text('Delete Chat')
-            //             ],
-            //           ),
-            //         ),
-            //         // PopupMenuItem 2
-            //         PopupMenuItem(
-            //           value: 2,
-            //           // row with two children
-            //           child: Row(
-            //             children: const [
-            //               Icon(
-            //                 Icons.block,
-            //                 color: Colors.red,
-            //               ),
-            //               SizedBox(
-            //                 width: 10,
-            //               ),
-            //               Text(
-            //                 'Block User',
-            //                 style: TextStyle(color: Colors.red),
-            //               )
-            //             ],
-            //           ),
-            //         ),
-            //       ],
-            //       elevation: 2,
-            //       // on selected we show the dialog box
-            //       onSelected: (value) {
-            //         // if value 1 show dialog
-            //         if (value == 1) {
-            //           // _showDialog(context);
-            //           // if value 2 show dialog
-            //         } else if (value == 2) {
-            //           // _showDialog(context);
-            //         }
-            //       },
-            //     ),
-            //   ],
-            //   title: Row(
-            //     children: [
-            //       Stack(
-            //         children: [
-            //           CircleAvatar(
-            //             backgroundImage: NetworkImage(
-            //                 controller.data[widget.index]['image'].toString()),
-            //           ),
-            //           controller.data[widget.index]['online']
-            //               ? Positioned(
-            //                   bottom: 0,
-            //                   right: 0,
-            //                   child: Container(
-            //                     width: 12,
-            //                     height: 12,
-            //                     decoration: const BoxDecoration(
-            //                         borderRadius:
-            //                             BorderRadius.all(Radius.circular(50)),
-            //                         color: Colors.greenAccent),
-            //                   ),
-            //                 )
-            //               : const SizedBox(
-            //                   width: 0,
-            //                   height: 0,
-            //                 )
-            //         ],
-            //       ),
-            //       const SizedBox(
-            //         width: 10,
-            //       ),
-            //       Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Text(controller.data[widget.index]['name'].toString()),
-            //           const SizedBox(
-            //             height: 2,
-            //           ),
-            //           controller.data[widget.index]['online']
-            //               ? const Text(
-            //                   'Active',
-            //                   style: TextStyle(fontSize: 15),
-            //                 )
-            //               : const SizedBox(
-            //                   height: 0,
-            //                   width: 0,
-            //                 )
-            //         ],
-            //       )
-            //     ],
-            //   ),
-            // ),
-            // body: Padding(
-            //   padding: const EdgeInsets.all(20.0),
-            //   child: SizedBox(
-            //     height: 700,
-            //     child: ListView.separated(itemBuilder: (context,index) => Text(list[index]), separatorBuilder: (context,index) => SizedBox(height: 10,), itemCount: list.length)
-            //   ),
-            // ),
-            // bottomSheet: Padding(
-            //     padding: const EdgeInsets.all(15),
-            //     child: TextField(
-            //       controller: _messageTextController,
-            //       decoration: InputDecoration(
-            //         suffixIcon: GestureDetector(
-            //           child: const Icon(Icons.send),
-            //           onTap: () {
-            //             _publishMessage(_messageTextController.text);
-            //           },
-            //         ),
-            //         border: const OutlineInputBorder(),
-            //         hintText: 'Enter Message',
-            //       ),
-            //     )),
-
             body: Chat(
               key: UniqueKey(),
               // fileMessageBuilder: ,
@@ -197,12 +61,9 @@ class _ChatPageState extends State<ChatPage> {
               appBarWidget: AppBar(
                 leading: InkWell(
                   child: const Icon(Icons.arrow_back),
-                  onTap: (){
-                    chatController.loadLastMessage();
+                  onTap: () {
                     Get.back<void>();
-
-
-
+                    chatController.loadLastMessage();
                   },
                 ),
                 leadingWidth: 30,
@@ -258,6 +119,8 @@ class _ChatPageState extends State<ChatPage> {
                     onSelected: (value) {
                       // if value 1 show dialog
                       if (value == 1) {
+                        Get.dialog(_alertDailog());
+
                         // _showDialog(context);
                         // if value 2 show dialog
                       } else if (value == 2) {
@@ -321,6 +184,43 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
           ));
+
+  Widget _alertDailog() {
+    return AlertDialog(
+      // contentPadding: const EdgeInsets.all(20),
+      actionsPadding: const EdgeInsets.all(20),
+      title: const Text("Clear this Chat?"),
+      titleTextStyle: const TextStyle(
+          fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+      actions: [
+        InkWell(
+            onTap: () {
+              Get.back<void>();
+            },
+            child: Text(
+              "cancel".toUpperCase(),
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            )),
+        const SizedBox(
+          width: 10,
+        ),
+        InkWell(
+            onTap: () {
+              _deleteChat();
+              Get.back<void>();
+            },
+            child: Text("clear chat".toUpperCase(),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold))),
+      ],
+      // content: Text("Saved successfully"),
+    );
+  }
 
   void _handleAtachmentPressed() {
     showModalBottomSheet<void>(
@@ -503,8 +403,9 @@ class _ChatPageState extends State<ChatPage> {
         payload: utf8.fuse(base64).encode(message.text),
         initiated: true,
         messageType: 1,
-        senderId: 'b',
-        receiverId: chatController.data[widget.index]['name']);
+        senderId: 'c',
+        receiverId: chatController.data[widget.index]['name']
+        );
 
     mqttController.publish(
         textMessage.createdAt!,
@@ -516,6 +417,20 @@ class _ChatPageState extends State<ChatPage> {
     mqttController.addMessage(textMessage);
     mqttController.checkId = textMessage.receiverId!;
     mqttController.update();
+  }
+
+  void _deleteChat() async{
+    final responses = objectbox.noteBox.getAll();
+    for (var x = 0; x < responses.length; x++) {
+      if (mqttController.userName == responses[x].receiverId) {
+        responses[x].mainMessageData!.clear();
+        var boxStore = objectbox.noteBox;
+        var index = boxStore.get(responses[x].id);
+        index?.mainMessageData?.clear();
+        boxStore.put(index!);
+        _loadMessages();
+      }
+    }
   }
 
   void _loadMessages() async {
