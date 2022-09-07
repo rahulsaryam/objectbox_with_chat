@@ -144,12 +144,19 @@ class Message extends StatelessWidget {
   Widget _statusBuilder(BuildContext context) {
     switch (message.status) {
       case 2:
+        return InheritedChatTheme.of(context).theme.deliveredIcon != null
+            ? InheritedChatTheme.of(context).theme.deliveredIcon!
+            : Image.asset(
+          'assets/icon-seen.png',
+          color: Colors.grey,
+          package: 'flutter_chat_ui',
+        );
       case 1:
         return InheritedChatTheme.of(context).theme.deliveredIcon != null
             ? InheritedChatTheme.of(context).theme.deliveredIcon!
             : Image.asset(
                 'assets/icon-delivered.png',
-                color: InheritedChatTheme.of(context).theme.primaryColor,
+                color: Colors.grey,
                 package: 'flutter_chat_ui',
               );
       // case types.Status.error:
@@ -165,7 +172,7 @@ class Message extends StatelessWidget {
             ? InheritedChatTheme.of(context).theme.seenIcon!
             : Image.asset(
                 'assets/icon-seen.png',
-                color: InheritedChatTheme.of(context).theme.primaryColor,
+                color: Colors.red,
                 package: 'flutter_chat_ui',
               );
       // case types.Status.sending:

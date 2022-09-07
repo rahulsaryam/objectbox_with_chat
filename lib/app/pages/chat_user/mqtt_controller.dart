@@ -3,9 +3,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:get/get.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
-
-import '../main.dart';
-import 'chat_controller.dart';
+import 'package:objectbox_with_chat/app/pages/chat_user/chat_user_controller.dart';
 
 enum MQTTAppConnectionState {
   connected,
@@ -22,56 +20,24 @@ class MqttController extends GetxController {
 
   String subscribeState = '';
 
-  String topic = '';
+  String topic = 'flutter/chat/friend';
 
-  String userName = '';
+  String clientId = 'laptop';
 
   String checkId = '';
 
-  bool checkData = true;
+  bool checkStatus = true;
 
-  List<types.MessageData> messages = [];
+  // List<types.MessageData> messages = [];
 
-  void addMessage(types.MessageData message) async {
-    await objectbox.addNote(message);
-    messages.insert(0, message);
-    update();
-  }
+  final chatUserController = Get.find<ChatUserController>();
 
-  void checkMessageData() async {
-    print('rass');
-    final responses = objectbox.noteBox.getAll();
-    if (responses.isEmpty) {
-      await objectbox
-          .addNote(types.TextMessage(senderId: 'c', receiverId: userName));
-    } else {
-      print('Second Time');
-      for (var x = 0; x < responses.length; x++) {
-        if (userName == responses[x].receiverId) {
-          print('DB is Available');
-          checkData = false;
-          update();
-          break;
-        }
-      }
-      if (checkData){
-        print('DB is Created');
-        await objectbox
-            .addNote(types.TextMessage(senderId: 'c', receiverId: userName));
-      }
-    }
-  }
-
-  final chatController = Get.find<ChatController>();
 
   // MQTTAppConnectionState MQTTAppConnectionState = MQTTAppConnectionState.disconnected;
 
   @override
   void onInit() {
-    topic = 'flutter/chat/friend';
-    userName = chatController.data[chatController.userIndex]['name'];
-    print('userNames $userName');
-    checkMessageData();
+    chatUserController;
     initializeMQTTClient();
     connect();
     super.onInit();
@@ -80,8 +46,6 @@ class MqttController extends GetxController {
   @override
   void onClose() {
     disconnect();
-    userName = '';
-    checkData = false;
     super.onClose();
   }
 
@@ -102,7 +66,7 @@ class MqttController extends GetxController {
   }
 
   void initializeMQTTClient() {
-    _client = MqttServerClient('broker.emqx.io', userName);
+    _client = MqttServerClient('test.mosquitto.org', clientId);
     _client!.port = 1883;
     _client!.keepAlivePeriod = 20;
     _client!.onDisconnected = onDisconnected;
@@ -114,9 +78,9 @@ class MqttController extends GetxController {
     _client!.onSubscribed = onSubscribed;
 
     final MqttConnectMessage connMess = MqttConnectMessage()
-        .withClientIdentifier(userName)
+        .withClientIdentifier(clientId)
         .withWillTopic(
-            'willtopic') // If you set this you must set a will message
+        'willtopic') // If you set this you must set a will message
         .withWillMessage('My Will message')
         .startClean() // Non persistent session for testing
         .withWillQos(MqttQos.atLeastOnce);
@@ -146,16 +110,16 @@ class MqttController extends GetxController {
   }
 
   void publish(int createdAt, String payload, bool initiated, int messageType,
-      String senderId, String receiverId,
+      String senderId, String receiverId, int status,
       {String fileName = '',
-      int dataSize = 0,
-      String thumbnail = '',
-      double height = 0,
-      double width = 0}) {
+        int dataSize = 0,
+        String thumbnail = '',
+        double height = 0,
+        double width = 0}) {
     if (connectState == 'Connected') {
       final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
       var dataToSend =
-          '{"createdAt" : $createdAt, "payload" : "$payload", "initiated" : ${!initiated}, "messageType" : $messageType, "senderId" : "$senderId", "receiverId" : "$receiverId","fileName" : "$fileName", "dataSize" : $dataSize , "thumbnail" : "$thumbnail" ,"height" : $height, "width" : $width }';
+          '{"createdAt" : $createdAt, "payload" : "$payload", "initiated" : ${!initiated}, "messageType" : $messageType, "senderId" : "$senderId", "receiverId" : "$receiverId","status" : $status, "fileName" : "$fileName", "dataSize" : $dataSize , "thumbnail" : "$thumbnail" ,"height" : $height, "width" : $width }';
       builder.addString(dataToSend);
       _client!.publishMessage(
         topic,
@@ -165,29 +129,30 @@ class MqttController extends GetxController {
     }
   }
 
-  // void sendAcknowledgement(
-  //     String chatID, int deliveryTime, int status, String receiverID) async {
-  //   final builder = MqttClientPayloadBuilder();
-  //   if (status == 3) {
-  //     var dataToSend =
-  //         '{"client_id":"$userID","chatId":"$chatID","readTime":$deliveryTime,"senderId":"$userID","status":$status}';
-  //     builder.addUTF8String(dataToSend);
-  //     var pubStatus = _mqttServerClient!.publishMessage(
-  //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
-  //         retain: true);
-  //     // Utility.printILog('publish message $pubStatus');
-  //     update();
-  //   } else if (status == 2) {
-  //     var dataToSend =
-  //         '{"client_id":"$userID","chatId":"$chatID","deliveryTime":$deliveryTime,"senderId":"$userID","status":$status}';
-  //     builder.addUTF8String(dataToSend);
-  //     var pubStatus = _mqttServerClient!.publishMessage(
-  //         'Acknowledgement/$receiverID', MqttQos.exactlyOnce, builder.payload!,
-  //         retain: true);
-  //     // Utility.printILog('publish message $pubStatus');
-  //     update();
-  //   }
-  // }
+  void sendAcknowledgement(String senderId, int deliveredAt, int status,
+      String receiverId, int messageType) async {
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+    if (status == 3) {
+      var dataToSend =
+          '{"deliveredAt":$deliveredAt,"senderId":"$senderId","status":$status,"receiverId" : "$receiverId","messageType" : $messageType}';
+      builder.addString(dataToSend);
+      _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!,retain: true);
+      // Utility.printILog('publish message $pubStatus');
+      update();
+    } else if (status == 2) {
+      print('$senderId =Rahul= $receiverId');
+      var dataToSend =
+          '{"deliveredAt":$deliveredAt,"senderId":"$senderId","status":$status,"receiverId" : "$receiverId","messageType" : $messageType}';
+      builder.addString(dataToSend);
+      _client!.publishMessage(
+        topic,
+        MqttQos.exactlyOnce,
+        builder.payload!,
+      );
+      // Utility.printILog('publish message $pubStatus');
+      update();
+    }
+  }
 
   /// The subscribed callback
   void onSubscribed(String topic) {
@@ -215,12 +180,48 @@ class MqttController extends GetxController {
 
       // final MqttPublishMessage recMess = c![0].payload;
       final String pt =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
       final message = types.MessageData.fromJson(jsonDecode(pt));
-      if (message.receiverId != checkId ){
-        print('Rahul Saryam ${message.receiverId}');
-        addMessage(message);
+      if (message.receiverId != checkId) {
+        if (message.status == 1) {
+          chatUserController.addMessage(message);
+          checkStatus = true;
+          update();
+        } else {
+          checkStatus = false;
+          update();
+          chatUserController.updateStatus(
+              message.senderId!, message.deliveredAt!, message.status!);
+          // if(chatUserController.pendingMessage){
+          //   sendAcknowledgement(
+          //       message.receiverId!,
+          //       DateTime.now().millisecondsSinceEpoch,
+          //       3,
+          //       message.senderId!,
+          //       message.messageType!);
+          // }
+
+        }
+
+      }
+      if (checkStatus) {
+        sendAcknowledgement(
+            message.receiverId!,
+            DateTime.now().millisecondsSinceEpoch,
+            2,
+            message.senderId!,
+            message.messageType!);
+        checkStatus = false;
+        update();
+        if(chatUserController.pendingMessage){
+          sendAcknowledgement(
+              message.receiverId!,
+              DateTime.now().millisecondsSinceEpoch,
+              3,
+              message.senderId!,
+              message.messageType!);
+        }
       }
 
       // chatController.messages.insert(index, element)
@@ -233,8 +234,6 @@ class MqttController extends GetxController {
         'EXAMPLE::OnConnected client callback - Client connection was sucessful');
   }
 }
-
-
 
 //
 // import 'dart:convert';
