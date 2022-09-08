@@ -359,7 +359,7 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
+          preferredSize: const Size.fromHeight(65),
           child: widget.appBarWidget,
         ),
         body: InheritedChatTheme(

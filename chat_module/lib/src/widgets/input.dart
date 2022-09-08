@@ -148,11 +148,11 @@ class _InputState extends State<Input> {
                 // InheritedChatTheme.of(context).theme.inputBackgroundColor,
                 child: Container(
                   width: 370,
-                  margin: EdgeInsets.only(bottom: 10),
+                  margin: EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                     color: Colors.white,
-                    border: Border.all(color: Colors.black)
+                    border: Border.all(color: Colors.grey,width: 2)
                   ),
 
                   padding: EdgeInsets.fromLTRB(
@@ -163,7 +163,8 @@ class _InputState extends State<Input> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.face),
+                      Icon(Icons.face,color: Colors.blue,),
+                      SizedBox(width: 5,),
                       Expanded(
                         child: TextField(
                           controller: _textController,
@@ -216,7 +217,7 @@ class _InputState extends State<Input> {
                       ) : SizedBox(
                           width: 50,
                           height: 50,
-                          child: Icon(Icons.camera,size: 40,)) ,
+                          child: Icon(Icons.camera_alt,size: 30,color: Colors.blue,)) ,
                     ],
                   ),
                 ),

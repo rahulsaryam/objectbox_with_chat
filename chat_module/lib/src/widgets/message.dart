@@ -172,7 +172,7 @@ class Message extends StatelessWidget {
             ? InheritedChatTheme.of(context).theme.seenIcon!
             : Image.asset(
                 'assets/icon-seen.png',
-                color: Colors.red,
+                color: Colors.blue,
                 package: 'flutter_chat_ui',
               );
       // case types.Status.sending:
@@ -226,7 +226,7 @@ class Message extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(context),
+          // if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(context),
           ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: messageWidth.toDouble(),
@@ -245,7 +245,7 @@ class Message extends StatelessWidget {
                           : InheritedChatTheme.of(context).theme.primaryColor,
                     ),
                     child: ClipRRect(
-                      borderRadius: _borderRadius,
+                      // borderRadius: _borderRadius,
                       child: _messageBuilder(),
                     ),
                   ),

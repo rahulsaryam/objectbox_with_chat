@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_chat_theme.dart';
+import 'package:intl/intl.dart';
 
 // import 'package:flutter_link_previewer/flutter_link_previewer.dart'
 //     show LinkPreview;
@@ -85,48 +86,72 @@ class TextMessage extends StatelessWidget {
   // }
 
   Widget _textWidgetBuilder(BuildContext context) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (showName)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Text(
-              '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: InheritedChatTheme.of(context)
-                  .theme
-                  .userNameTextStyle,
-            ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // if (showName)
+          //   Padding(
+          //     padding: const EdgeInsets.only(bottom: 6),
+          //     child: Text(
+          //       '02.40 AM',
+          //       maxLines: 1,
+          //       overflow: TextOverflow.ellipsis,
+          //       style: InheritedChatTheme.of(context)
+          //           .theme
+          //           .userNameTextStyle,
+          //     ),
+          //   ),
+          SelectableText(
+            utf8.fuse(base64).decode(message.payload.toString()),
+            style: message.initiated == true
+                ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
+                : InheritedChatTheme.of(context)
+                    .theme
+                    .receivedMessageBodyTextStyle,
+            textWidthBasis: TextWidthBasis.longestLine,
           ),
-        SelectableText(
-          utf8.fuse(base64).decode(message.payload.toString()),
-          style: message.initiated==true
-              ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
-              : InheritedChatTheme.of(context)
-                  .theme
-                  .receivedMessageBodyTextStyle,
-          textWidthBasis: TextWidthBasis.longestLine,
-        ),
-      ],
-    );
+        ],
+      );
 
   @override
-  Widget build(BuildContext context) => Container(
-      decoration: BoxDecoration(
-        border: message.initiated==true
-            ? Border.all(color: Colors.grey)
-            : Border.all(color: Colors.blue),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-          topRight: Radius.circular(20),
+  Widget build(BuildContext context) {
+    final _currentUserIsAuthor = message.initiated == true;
+    final DateTime _date1 =
+    DateTime.fromMillisecondsSinceEpoch(message.createdAt!);
+    String _timeFormate = DateFormat.jm().format(_date1);
+    return Column(
+      crossAxisAlignment: _currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: _currentUserIsAuthor
+                ? Border.all(color: Colors.grey,width: 1.5)
+                : Border.all(color: Colors.red,width: 1.5),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              bottomLeft:
+                  _currentUserIsAuthor ? Radius.circular(10) : Radius.circular(0),
+              bottomRight:
+                  _currentUserIsAuthor ? Radius.circular(0) : Radius.circular(10),
+              topRight: Radius.circular(10),
+            ),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _textWidgetBuilder(context)
+                  ),
+            ],
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: _textWidgetBuilder(context),
-      ),
+        SizedBox(height: 5,),
+        Text(
+          _timeFormate,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Colors.grey,fontSize: 12,fontWeight: FontWeight.bold),
+        )
+      ],
     );
+  }
 }

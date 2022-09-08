@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' show File, Platform;
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -41,26 +42,34 @@ class ChatPage extends StatelessWidget {
       showUserAvatars: true,
       showUserNames: true,
       appBarWidget: AppBar(
+        elevation: 1,
+        backgroundColor: Colors.white,
         leading: InkWell(
-          child: const Icon(Icons.arrow_back),
+          child: const Icon(Icons.arrow_back, color: Colors.red,),
           onTap: () {
             Get.back<void>();
             chatController.loadLastMessage();
             chatController.pendingMessage = false;
-            chatController.numberOfMessage = 0;
-            chatController.pendingMessagesList.clear();
+            for(var x = 0; x < chatController.data.length; x++){
+              if(chatController.userName == chatController.data[x].name){
+                chatController.data[x].message!.clear();
+                chatController.numberOfMessage = 0;
+              }
+            }
             chatController.update();
           },
         ),
         leadingWidth: 30,
         actions: [
           GestureDetector(
-            child: const Icon(Icons.attach_file),
+            child: const Icon(Icons.attach_file,color: Colors.red,),
             onTap: () {
-              // _handleAtachmentPressed();
+              // _handleAtachmentPressed(context);
             },
           ),
-          PopupMenuButton<int>(
+          PopupMenuButton(
+            // color: Colors.black,
+            icon: const Icon(Icons.more_vert,color: Colors.red,size: 30,),
             itemBuilder: (context) => [
               // PopupMenuItem 1
               PopupMenuItem(
@@ -119,21 +128,40 @@ class ChatPage extends StatelessWidget {
           children: [
             Stack(
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(chatController.data[index]['image']
-                      .toString()),
+                Container(
+                  width: 50,
+                  decoration: const BoxDecoration(
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(50)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 1,
+                          spreadRadius: 0,
+                          offset: Offset(0, 0)),
+                    ],
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: ClipRRect(
+                    borderRadius:
+                    const BorderRadius.all(Radius.circular(50)),
+                    child: Image.network(
+                        controller.data[index].image.toString()),
+                  ),
                 ),
-                chatController.data[index]['online']
+                chatController.data[index].online!
                     ? Positioned(
-                  bottom: 0,
+                  bottom: 1,
                   right: 0,
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(50)),
-                        color: Colors.greenAccent),
+                  child:Container(
+                      width: 15,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white,width: 2),
+                        borderRadius: const BorderRadius.all(
+                            Radius.circular(50)),
+                        color: Colors.green,)
                   ),
                 )
                     : const SizedBox(
@@ -143,20 +171,20 @@ class ChatPage extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              width: 10,
+              width: 20,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(chatController.data[index]['name']
-                    .toString()),
+                Text(chatController.data[index].name
+                    .toString(),style: const TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
                 const SizedBox(
                   height: 2,
                 ),
-                chatController.data[index]['online']
+                chatController.data[index].online!
                     ? const Text(
                   'Active',
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 15,color: Colors.grey),
                 )
                     : const SizedBox(
                   height: 0,
@@ -208,48 +236,48 @@ class ChatPage extends StatelessWidget {
   }
 
   /// Attachment
-  // void _handleAtachmentPressed() {
-  //   showModalBottomSheet<void>(
-  //     context: context,
-  //     builder: (BuildContext context) => SafeArea(
-  //       child: SizedBox(
-  //         height: 144,
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.stretch,
-  //           children: <Widget>[
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //                 _handleImageSelection();
-  //               },
-  //               child: const Align(
-  //                 alignment: AlignmentDirectional.centerStart,
-  //                 child: Text('Photo'),
-  //               ),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //                 _handleFileSelection();
-  //               },
-  //               child: const Align(
-  //                 alignment: AlignmentDirectional.centerStart,
-  //                 child: Text('File'),
-  //               ),
-  //             ),
-  //             TextButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: const Align(
-  //                 alignment: AlignmentDirectional.centerStart,
-  //                 child: Text('Cancel'),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _handleAtachmentPressed(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 144,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection();
+                },
+                child: const Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text('Photo'),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleFileSelection();
+                },
+                child: const Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text('File'),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text('Cancel'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   void _handleFileSelection() async {
     final result = await FilePicker.platform.pickFiles(
@@ -265,7 +293,8 @@ class ChatPage extends StatelessWidget {
           initiated: true,
           messageType: 10,
           senderId: 'b',
-          receiverId: chatController.data[index]['name']);
+          status: 1,
+          receiverId: chatController.data[index].name);
       chatController.addMessage(message);
       mqttController.publish(
           message.createdAt!,
@@ -294,15 +323,15 @@ class ChatPage extends StatelessWidget {
       final message = types.ImageMessage(
         createdAt: DateTime.now().millisecondsSinceEpoch,
         height: image.height.toDouble(),
-        payload: utf8.fuse(base64).encode(
-            'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8aG9tZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
+        payload: utf8.fuse(base64).encode(result.path) ,
         fileName: result.name,
         dataSize: bytes.length,
         messageType: 2,
         initiated: true,
         senderId: 'b',
-        receiverId: chatController.data[index]['name'],
+        receiverId: chatController.data[index].name,
         width: image.width.toDouble(),
+        status: 1
       );
 
       mqttController.publish(
@@ -390,9 +419,9 @@ class ChatPage extends StatelessWidget {
         payload: utf8.fuse(base64).encode(message.text),
         initiated: true,
         messageType: 1,
-        senderId: 'c',
+        senderId: 'Rajkumar',
         status: 1,
-        receiverId: chatController.data[index]['name']
+        receiverId: chatController.data[index].name
     );
 
     mqttController.publish(

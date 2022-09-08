@@ -66,7 +66,7 @@ class MqttController extends GetxController {
   }
 
   void initializeMQTTClient() {
-    _client = MqttServerClient('test.mosquitto.org', clientId);
+    _client = MqttServerClient('broker.emqx.io', clientId);
     _client!.port = 1883;
     _client!.keepAlivePeriod = 20;
     _client!.onDisconnected = onDisconnected;
