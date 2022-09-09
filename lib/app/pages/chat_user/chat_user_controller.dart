@@ -42,18 +42,18 @@ class ChatUserController extends GetxController {
             'https://media-exp1.licdn.com/dms/image/C4E03AQHrwP5CtFo_pg/profile-displayphoto-shrink_200_200/0/1628675384915?e=2147483647&v=beta&t=Pk5FrDBxm2Ryxv3YAZ99nb08jSKKz-ngUdkuLlZsduE',
         message: [],
         online: true),
-    UserData(
-        name: 'Riyaz',
-        image:
-            'https://media-exp1.licdn.com/dms/image/C4D03AQHiznmKuo5jsw/profile-displayphoto-shrink_200_200/0/1516314605932?e=2147483647&v=beta&t=bg2MAprt3fPziGUfzvSWkPqIWr9m9jVdAdlsxCluJsA',
-        message: [],
-        online: true),
+    // UserData(
+    //     name: 'Riyaz',
+    //     image:
+    //         'https://media-exp1.licdn.com/dms/image/C4D03AQHiznmKuo5jsw/profile-displayphoto-shrink_200_200/0/1516314605932?e=2147483647&v=beta&t=bg2MAprt3fPziGUfzvSWkPqIWr9m9jVdAdlsxCluJsA',
+    //     message: [],
+    //     online: true),
     // UserData(
     //     name: 'Rajkumar',
     //     image:
     //         'https://media-exp1.licdn.com/dms/image/C4D03AQGqCechvJ3VXA/profile-displayphoto-shrink_800_800/0/1615043633236?e=2147483647&v=beta&t=FBXEm0K4vHsg0bpojs4wCiHBhsQb_1aZUhj1WfI8ysQ',
     //     message: [],
-    //     online: false),
+    //     online: true),
   ];
 
   void checkMessageData() async {

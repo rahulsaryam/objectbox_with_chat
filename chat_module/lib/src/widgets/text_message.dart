@@ -102,11 +102,18 @@ class TextMessage extends StatelessWidget {
           //   ),
           SelectableText(
             utf8.fuse(base64).decode(message.payload.toString()),
-            style: message.initiated == true
-                ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
-                : InheritedChatTheme.of(context)
-                    .theme
-                    .receivedMessageBodyTextStyle,
+            style : TextStyle(
+              color: Colors.grey[700],
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Circular Air Pro',
+              // letterSpacing:Dimens.zero,
+            ),
+            // style: message.initiated == true
+            //     ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
+            //     : InheritedChatTheme.of(context)
+            //         .theme
+            //         .receivedMessageBodyTextStyle,
             textWidthBasis: TextWidthBasis.longestLine,
           ),
         ],
@@ -118,40 +125,43 @@ class TextMessage extends StatelessWidget {
     final DateTime _date1 =
     DateTime.fromMillisecondsSinceEpoch(message.createdAt!);
     String _timeFormate = DateFormat.jm().format(_date1);
-    return Column(
-      crossAxisAlignment: _currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: _currentUserIsAuthor
-                ? Border.all(color: Colors.grey,width: 1.5)
-                : Border.all(color: Colors.red,width: 1.5),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10),
-              bottomLeft:
-                  _currentUserIsAuthor ? Radius.circular(10) : Radius.circular(0),
-              bottomRight:
-                  _currentUserIsAuthor ? Radius.circular(0) : Radius.circular(10),
-              topRight: Radius.circular(10),
+    return Container(
+      color: Colors.grey[100],
+      child: Column(
+        crossAxisAlignment: _currentUserIsAuthor ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: _currentUserIsAuthor
+                  ? Border.all(color: Colors.grey,width: 1)
+                  : Border.all(color: Colors.red,width: 1),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5),
+                bottomLeft:
+                    _currentUserIsAuthor ? Radius.circular(5) : Radius.circular(0),
+                bottomRight:
+                    _currentUserIsAuthor ? Radius.circular(0) : Radius.circular(5),
+                topRight: Radius.circular(5),
+              ),
             ),
+            child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _textWidgetBuilder(context)
+                ),
           ),
-          child: Column(
-            children: [
-              Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: _textWidgetBuilder(context)
-                  ),
-            ],
-          ),
-        ),
-        SizedBox(height: 5,),
-        Text(
-          _timeFormate,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Colors.grey,fontSize: 12,fontWeight: FontWeight.bold),
-        )
-      ],
+          SizedBox(height: 3,),
+          Text(
+            _timeFormate,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(  color: Colors.grey[500],
+              fontSize: 9,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Circular Air Pro',),
+          )
+        ],
+      ),
     );
   }
 }

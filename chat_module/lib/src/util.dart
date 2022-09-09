@@ -41,17 +41,17 @@ String getVerboseDateTimeRepresentation(
 }) {
   final formattedDate = dateFormat != null
       ? dateFormat.format(dateTime)
-      : DateFormat.MMMd(dateLocale).format(dateTime);
+      : DateFormat.yMMMMd(dateLocale).format(dateTime);
   final formattedTime = timeFormat != null
       ? timeFormat.format(dateTime)
-      : DateFormat.Hm(dateLocale).format(dateTime);
+      : DateFormat.jm().format(dateTime);     /// DateFormat.Hms(dateLocale).format(dateTime);
   final localDateTime = dateTime.toLocal();
   final now = DateTime.now();
 
   if (localDateTime.day == now.day &&
       localDateTime.month == now.month &&
       localDateTime.year == now.year) {
-    return formattedTime;
+    return '$formattedDate at $formattedTime';
   }
 
   return '$formattedDate, $formattedTime';
@@ -69,6 +69,7 @@ List<Object> calculateChatMessages(
   required bool showUserNames,
   DateFormat? timeFormat,
 }) {
+
   final chatMessages = <Object>[];
   final gallery = <PreviewImage>[];
 

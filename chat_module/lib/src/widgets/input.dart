@@ -112,120 +112,140 @@ class _InputState extends State<Input> {
   Widget build(BuildContext context) {
     final _query = MediaQuery.of(context);
 
-    return GestureDetector(
-      onTap: _inputFocusNode.requestFocus,
-      child: Shortcuts(
-        shortcuts: {
-          LogicalKeySet(LogicalKeyboardKey.enter): const SendMessageIntent(),
-          LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.alt):
-          const NewLineIntent(),
-          LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.shift):
-          const NewLineIntent(),
-        },
-        child: Actions(
-          actions: {
-            SendMessageIntent: CallbackAction<SendMessageIntent>(
-              onInvoke: (SendMessageIntent intent) => _handleSendPressed(),
-            ),
-            NewLineIntent: CallbackAction<NewLineIntent>(
-              onInvoke: (NewLineIntent intent) {
-                final _newValue = '${_textController.text}\r\n';
-                _textController.value = TextEditingValue(
-                  text: _newValue,
-                  selection: TextSelection.fromPosition(
-                    TextPosition(offset: _newValue.length),
-                  ),
-                );
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey,
+              blurRadius: 5,
+              spreadRadius: 1,
+              offset: Offset(0, 4)
+          ),
+        ]
+      ),
+      // padding: EdgeInsets.all(40),
+      padding: EdgeInsets.only(right: 10, left: 20, top: 20, bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: _inputFocusNode.requestFocus,
+            child: Shortcuts(
+              shortcuts: {
+                LogicalKeySet(LogicalKeyboardKey.enter): const SendMessageIntent(),
+                LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.alt):
+                const NewLineIntent(),
+                LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.shift):
+                const NewLineIntent(),
               },
-            ),
-          },
-          child: Focus(
-            autofocus: true,
-            child: Padding(
-              padding: InheritedChatTheme.of(context).theme.inputPadding,
-              child: Material(
-                // color:
-                // InheritedChatTheme.of(context).theme.inputBackgroundColor,
-                child: Container(
-                  width: 370,
-                  margin: EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey,width: 2)
+              child: Actions(
+                actions: {
+                  SendMessageIntent: CallbackAction<SendMessageIntent>(
+                    onInvoke: (SendMessageIntent intent) => _handleSendPressed(),
                   ),
+                  NewLineIntent: CallbackAction<NewLineIntent>(
+                    onInvoke: (NewLineIntent intent) {
+                      final _newValue = '${_textController.text}\r\n';
+                      _textController.value = TextEditingValue(
+                        text: _newValue,
+                        selection: TextSelection.fromPosition(
+                          TextPosition(offset: _newValue.length),
+                        ),
+                      );
+                    },
+                  ),
+                },
+                child: Focus(
+                  autofocus: true,
+                  child: Padding(
+                    padding: InheritedChatTheme.of(context).theme.inputPadding,
+                    child: Material(
+                      // color:
+                      // InheritedChatTheme.of(context).theme.inputBackgroundColor,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            // color: Colors.white,
+                            border: Border.all(color: Colors.grey[400]!,width: 1)
+                        ),
 
-                  padding: EdgeInsets.fromLTRB(
-                    10 + _query.padding.left,
-                    0,
-                    10 + _query.padding.right,
-                    0 + _query.viewInsets.bottom + _query.padding.bottom,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.face,color: Colors.blue,),
-                      SizedBox(width: 5,),
-                      Expanded(
-                        child: TextField(
-                          controller: _textController,
-                          cursorColor: InheritedChatTheme.of(context)
-                              .theme
-                              .inputTextCursorColor,
-                          decoration: InheritedChatTheme.of(context)
-                              .theme
-                              .inputTextDecoration
-                              .copyWith(
-                            hintStyle: InheritedChatTheme.of(context)
-                                .theme
-                                .inputTextStyle
-                                .copyWith(
-                              color: InheritedChatTheme.of(context)
-                                  .theme
-                                  .inputTextColor
-                                  .withOpacity(0.5),
+                        padding: EdgeInsets.fromLTRB(
+                          10 + _query.padding.left,
+                          0,
+                          10 + _query.padding.right,
+                          0 + _query.viewInsets.bottom + _query.padding.bottom,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _textController,
+                                cursorColor: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextCursorColor,
+                                decoration: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextDecoration
+                                    .copyWith(
+                                  hintStyle: TextStyle(  color: Colors.grey[500],
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: 'Circular Air Pro',),
+                                  hintText: InheritedL10n.of(context)
+                                      .l10n
+                                      .inputPlaceholder,
+                                ),
+                                focusNode: _inputFocusNode,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 5,
+                                minLines: 1,
+                                onChanged: widget.onTextChanged,
+                                onTap: widget.onTextFieldTap,
+                                style: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextStyle
+                                    .copyWith(
+                                  color: InheritedChatTheme.of(context)
+                                      .theme
+                                      .inputTextColor,
+                                ),
+                                textCapitalization: TextCapitalization.sentences,
+                              ),
                             ),
-                            hintText: InheritedL10n.of(context)
-                                .l10n
-                                .inputPlaceholder,
-                          ),
-                          focusNode: _inputFocusNode,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 5,
-                          minLines: 1,
-                          onChanged: widget.onTextChanged,
-                          onTap: widget.onTextFieldTap,
-                          style: InheritedChatTheme.of(context)
-                              .theme
-                              .inputTextStyle
-                              .copyWith(
-                            color: InheritedChatTheme.of(context)
-                                .theme
-                                .inputTextColor,
-                          ),
-                          textCapitalization: TextCapitalization.sentences,
+                            if (widget.onAttachmentPressed != null) _leftWidget(),
+                            SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Icons.camera_alt,size: 30,color: Colors.blue,)) ,
+                          ],
                         ),
                       ),
-                      if (widget.onAttachmentPressed != null) _leftWidget(),
-                      _sendButtonVisible ?
-                      SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: SendButton(
-                          onPressed: _handleSendPressed,
-                          clickable: _sendButtonVisible,
-                        ),
-                      ) : SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Icon(Icons.camera_alt,size: 30,color: Colors.blue,)) ,
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+          _sendButtonVisible ?
+          Container(
+            width: 50,
+            height: 50,
+            margin: EdgeInsets.only(right: 10),
+            child: SendButton(
+              onPressed: _handleSendPressed,
+              clickable: _sendButtonVisible,
+            ),
+          ) : SizedBox(
+              width: 50,
+              height: 50,
+              child: Icon(Icons.mic,size: 30,color: Colors.blue,))
+        ],
+      )
+      ,
     );
   }
 }

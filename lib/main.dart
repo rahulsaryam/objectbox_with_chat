@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:objectbox_with_chat/app/navigators/app_pages.dart';
 import 'package:objectbox_with_chat/app/pages/chat_user/chat_user_controller.dart';
@@ -31,14 +32,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
-      getPages: AppPages.pages,
-      initialRoute: Routes.chatUser,
-      enableLog: true,
-      unknownRoute: AppPages.pages[0],
-    );
+    return ScreenUtilInit(
+        designSize: const Size(375, 745),
+        builder: (BuildContext c1,__) => GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.system,
+          theme: ThemeData(fontFamily: 'Circular Air Pro'),
+          getPages: AppPages.pages,
+          initialRoute: Routes.chatUser,
+          enableLog: true,
+          unknownRoute: AppPages.pages[0],
+        ));
   }
 }
 

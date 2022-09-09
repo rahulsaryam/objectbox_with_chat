@@ -1,7 +1,11 @@
+import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:objectbox_with_chat/app/navigators/routes_managment.dart';
 import 'package:objectbox_with_chat/app/pages/chat_user/chat_user_controller.dart';
+import 'package:objectbox_with_chat/app/theme/colors_value.dart';
+import 'package:objectbox_with_chat/app/theme/dimens.dart';
+import 'package:objectbox_with_chat/app/theme/style.dart';
 
 class ChatUser extends StatelessWidget {
   const ChatUser({Key? key}) : super(key: key);
@@ -10,9 +14,20 @@ class ChatUser extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<ChatUserController>(
       builder: (controller) => Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            title:  const Text('Chats',style: TextStyle(color: Colors.red, fontSize: 25,fontWeight: FontWeight.bold),),
-            leading: Icon(Icons.adaptive.arrow_back,color: Colors.red,),
+            backgroundColor: ColorsValue.whiteColor,
+            title: Text(
+              'Chats',
+              style: Styles.boldRed28,
+            ),
+            leading: Padding(
+              padding: Dimens.edgeInsetsLeft10,
+              child: Icon(
+                Icons.adaptive.arrow_back,
+                color: ColorsValue.lightRedColor,
+                size: Dimens.thirty,
+              ),
+            ),
+            leadingWidth: Dimens.fourty,
             elevation: 1,
             // centerTitle: true,
           ),
@@ -24,7 +39,8 @@ class ChatUser extends StatelessWidget {
                         // Get.to(ChatPage(index: index));
                         RouteManagement.goToChatPage(index);
                         // controller.userIndex = index;
-                        controller.userName = controller.data[index].name ?? '';
+                        controller.userName =
+                            controller.data[index].name ?? '';
                         controller.pendingMessage = true;
                         controller.pendingMessageSettle();
                         controller.checkMessageData();
@@ -32,98 +48,106 @@ class ChatUser extends StatelessWidget {
                         controller.update();
                       },
                       child: ListTile(
-                        // minLeadingWidth: 50,
                         leading: Stack(
                           children: [
                             Container(
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
+                              width: Dimens.fourtyNine,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(Dimens.fifty)),
                                 boxShadow: [
                                   BoxShadow(
                                       color: Colors.grey,
-                                      blurRadius: 5,
-                                      spreadRadius: 0,
-                                      offset: Offset(0, 0)),
+                                      blurRadius: Dimens.three,
+                                      spreadRadius: Dimens.zero,
+                                      offset: Offset(
+                                          Dimens.zero, Dimens.zero)),
                                 ],
-                                color: Colors.white,
+                                color: ColorsValue.whiteColor,
                               ),
-                              padding: const EdgeInsets.all(2),
+                              padding: Dimens.edgeInsets2,
                               child: ClipRRect(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(50)),
-                                child: Image.network(
-                                    controller.data[index].image.toString()),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(Dimens.fifty)),
+                                child: Image.network(controller
+                                    .data[index].image
+                                    .toString()),
                               ),
                             ),
                             controller.data[index].online!
                                 ? Positioned(
-                                    bottom: 1,
-                                    right: 0,
+                                    bottom: Dimens.five,
+                                    right: Dimens.zero,
                                     child: Container(
-                                      width: 15,
-                                      height: 15,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.white,width: 2),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(50)),
-                                          color: Colors.green,)
-                                    ),
+                                        width: Dimens.ten,
+                                        height: Dimens.ten,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  ColorsValue.whiteColor,
+                                              width: Dimens.one),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  Dimens.fifty)),
+                                          color: ColorsValue.greenColor,
+                                        )),
                                   )
-                                : const SizedBox(
-                                    width: 0,
-                                    height: 0,
-                                  )
+                                : Dimens.box0
                           ],
                         ),
                         title: Text(
                           controller.data[index].name.toString(),
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          style: Styles.BoldGrey16,
                         ),
-                        subtitle: Text(controller.messageSender ==
-                                controller.data[index].name
-                            ? controller.lastMessage
-                            : ''),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(controller.messageSender ==
-                                    controller.data[index].name
-                                ? controller.lastTime
-                                : ''),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            controller.numberOfMessage == 0
-                                ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                            )
-                                : controller.messageSender ==
+                        subtitle: Text(
+                          controller.messageSender ==
+                                  controller.data[index].name
+                              ? controller.lastMessage
+                              : '',
+                          style: Styles.mediumGrey12,
+                        ),
+                        trailing: Padding(
+                          padding: Dimens.edgeInsetsTop5,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                controller.messageSender ==
                                         controller.data[index].name
-                                    ? Container(
-                                        alignment: Alignment.center,
-                                        width: 20,
-                                        height: 20,
-                                        decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10)),
-                                            color: Colors.red),
-                                        child: Text(
-                                          controller.numberOfMessage.toString(),
-                                          style: const TextStyle(color: Colors.white),
-                                        ),
-                                      )
-                                    : const SizedBox()
-                          ],
+                                    ? controller.lastTime
+                                    : '',
+                                style: Styles.lightGrey10,
+                              ),
+                              Dimens.boxHeight10,
+                              controller.numberOfMessage == 0
+                                  ? Dimens.boxHeight20
+                                  : controller.messageSender ==
+                                          controller.data[index].name
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          width: Dimens.fifteen,
+                                          height: Dimens.fifteen,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.all(
+                                                      Radius.circular(
+                                                          Dimens.ten)),
+                                              color: ColorsValue
+                                                  .lightRedColor),
+                                          child: Text(
+                                            controller.numberOfMessage
+                                                .toString(),
+                                            style: Styles.white8,
+                                          ),
+                                        )
+                                      : const SizedBox()
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                separatorBuilder: (context, index) => const SizedBox(
-                      height: 10,
-                    ),
+                separatorBuilder: (context, index) => Dimens.boxHeight10,
                 itemCount: controller.data.length),
           )));
 }

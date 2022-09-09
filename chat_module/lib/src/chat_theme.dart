@@ -260,7 +260,7 @@ class DefaultChatTheme extends ChatTheme {
     double messageInsetsHorizontal = 20,
     double messageInsetsVertical = 16,
     Color primaryColor = primary,
-    TextStyle receivedMessageBodyTextStyle = const TextStyle(
+    TextStyle receivedMessageBodyTextStyle =  const TextStyle(
       color: Colors.black,
       fontFamily: 'Avenir',
       fontSize: 16,
@@ -294,7 +294,7 @@ class DefaultChatTheme extends ChatTheme {
     Widget? sendButtonIcon,
     Widget? sendingIcon,
     TextStyle sentMessageBodyTextStyle = const TextStyle(
-      color: Colors.black,
+      color: Colors.grey,
       fontFamily: 'Avenir',
       fontSize: 16,
       fontWeight: FontWeight.w500,

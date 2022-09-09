@@ -279,7 +279,12 @@ class _ChatState extends State<Chat> {
         ),
         child: Text(
           object.text,
-          style: widget.theme.dateDividerTextStyle,
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'Circular Air Pro',
+          ),
         ),
       );
     } else if (object is MessageSpacer) {
@@ -359,7 +364,7 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(65),
+          preferredSize: const Size.fromHeight(60),
           child: widget.appBarWidget,
         ),
         body: InheritedChatTheme(

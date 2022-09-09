@@ -11,12 +11,15 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:objectbox_with_chat/app/pages/chat_user/chat_user_controller.dart';
 import 'package:objectbox_with_chat/app/pages/chat_user/mqtt_controller.dart';
+import 'package:objectbox_with_chat/app/theme/style.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../widget/enlarger_widget.dart';
+import '../../../theme/colors_value.dart';
+import '../../../theme/dimens.dart';
 
 
 class ChatPage extends StatelessWidget {
@@ -35,6 +38,7 @@ class ChatPage extends StatelessWidget {
       key: UniqueKey(),
       // fileMessageBuilder: ,
       messages: chatController.messages,
+      theme: const DefaultChatTheme(backgroundColor: ColorsValue.moreLightGreyColor),
       // onAttachmentPressed: _handleAtachmentPressed,
       onMessageTap: _handleMessageTap,
       // onPreviewDataFetched: _handlePreviewDataFetched,
@@ -42,10 +46,13 @@ class ChatPage extends StatelessWidget {
       showUserAvatars: true,
       showUserNames: true,
       appBarWidget: AppBar(
-        elevation: 1,
+        elevation: Dimens.pointFive,
         backgroundColor: Colors.white,
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.red,),
+          child: Padding(
+            padding: Dimens.edgeInsetsLeft10,
+            child: Icon(Icons.adaptive.arrow_back,color: ColorsValue.lightRedColor,size: Dimens.thirty,),
+          ),
           onTap: () {
             Get.back<void>();
             chatController.loadLastMessage();
@@ -54,12 +61,15 @@ class ChatPage extends StatelessWidget {
               if(chatController.userName == chatController.data[x].name){
                 chatController.data[x].message!.clear();
                 chatController.numberOfMessage = 0;
+                chatController.update();
+                // chatController.lastMessage = '';
+                // chatController.lastTime = '';
               }
             }
             chatController.update();
           },
         ),
-        leadingWidth: 30,
+        // leadingWidth: 30,
         actions: [
           GestureDetector(
             child: const Icon(Icons.attach_file,color: Colors.red,),
@@ -124,75 +134,67 @@ class ChatPage extends StatelessWidget {
             },
           ),
         ],
-        title: Row(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: 50,
-                  decoration: const BoxDecoration(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(50)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 1,
-                          spreadRadius: 0,
-                          offset: Offset(0, 0)),
-                    ],
-                    color: Colors.white,
+        title: Padding(
+          padding: Dimens.edgeInsetsTop5,
+          child: Row(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    width: Dimens.fourtyOne,
+                    decoration: BoxDecoration(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(Dimens.fifty)),
+                      boxShadow: [
+                        BoxShadow(
+                            color: ColorsValue.lightGreyColor,
+                            blurRadius: Dimens.one,
+                            spreadRadius: Dimens.zero,
+                            offset: Offset(Dimens.zero, Dimens.zero)),
+                      ],
+                      color: Colors.white,
+                    ),
+                    padding: Dimens.edgeInsets2,
+                    child: ClipRRect(
+                      borderRadius:
+                      BorderRadius.all(Radius.circular(Dimens.fifty)),
+                      child: Image.network(
+                          controller.data[index].image.toString()),
+                    ),
                   ),
-                  padding: const EdgeInsets.all(2),
-                  child: ClipRRect(
-                    borderRadius:
-                    const BorderRadius.all(Radius.circular(50)),
-                    child: Image.network(
-                        controller.data[index].image.toString()),
-                  ),
-                ),
-                chatController.data[index].online!
-                    ? Positioned(
-                  bottom: 1,
-                  right: 0,
-                  child:Container(
-                      width: 15,
-                      height: 15,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white,width: 2),
-                        borderRadius: const BorderRadius.all(
-                            Radius.circular(50)),
-                        color: Colors.green,)
-                  ),
-                )
-                    : const SizedBox(
-                  width: 0,
-                  height: 0,
-                )
-              ],
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(chatController.data[index].name
-                    .toString(),style: const TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
-                const SizedBox(
-                  height: 2,
-                ),
-                chatController.data[index].online!
-                    ? const Text(
-                  'Active',
-                  style: TextStyle(fontSize: 15,color: Colors.grey),
-                )
-                    : const SizedBox(
-                  height: 0,
-                  width: 0,
-                )
-              ],
-            )
-          ],
+                  chatController.data[index].online!
+                      ? Positioned(
+                    bottom: Dimens.five,
+                    right: 0,
+                    child:Container(
+                        width: Dimens.ten,
+                        height: Dimens.ten,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: ColorsValue.whiteColor,width: Dimens.one),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(Dimens.fifty)),
+                          color: Colors.green,)
+                    ),
+                  )
+                      : Dimens.box0
+                ],
+              ),
+             Dimens.boxWidth14,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(chatController.data[index].name
+                      .toString(),style: Styles.BoldGrey16),
+                  chatController.data[index].online!
+                      ? Text(
+                    'Active',
+                    style: Styles.lightGrey12,
+                  )
+                      : Dimens.box0
+                ],
+              )
+            ],
+          ),
         ),
       ),
     ),
